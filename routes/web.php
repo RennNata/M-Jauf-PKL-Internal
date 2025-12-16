@@ -33,4 +33,4 @@ Route::get('/kategori/{nama?}', function ($nama = 'Semua') {
 
 Route::get('/produk/{id}', function ($id) {
     return "Detail Produk $id";
-})->name('produk.detail');
+})->name('produk.detail');  
