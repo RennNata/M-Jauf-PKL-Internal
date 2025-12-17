@@ -1,36 +1,113 @@
 <?php
+// ========================================
+// FILE: routes/web.php
+// FUNGSI: Mendefinisikan semua URL route aplikasi
+// ========================================
 
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\Auth;
+use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\AdminController;
+use App\Http\Controllers\AdminProductController;
+use App\Http\Middleware\AdminMiddleware;
+use App\Http\Controllers\Auth\GoogleController;
 
+// ================================================
+// ROUTE PUBLIK (Bisa diakses siapa saja)
+// ================================================
 Route::get('/', function () {
     return view('welcome');
 });
+// ↑ Halaman utama, tidak perlu login
 
-Route::get('/tentang', function () {
-    // ================================================
-    // Route::get() = Tangani HTTP GET request
-    // '/tentang'   = URL yang akan dihandle
-    // function     = Kode yang dijalankan saat URL diakses
-    // ================================================
+// ================================================
+// AUTH ROUTES
+// ================================================
+// Auth::routes() adalah "shortcut" yang membuat banyak route sekaligus:
+// - GET  /login           → Tampilkan form login
+// - POST /login           → Proses login
+// - POST /logout          → Proses logout
+// - GET  /register        → Tampilkan form register
+// - POST /register        → Proses register
+// - GET  /password/reset  → Tampilkan form lupa password
+// - POST /password/email  → Kirim email reset password
+// - dll...
+// ================================================
+Auth::routes();
 
-    return view('tentang');
-    // ↑ return view('tentang') = Tampilkan file tentang.blade.php
-    // ↑ Laravel akan mencari di: resources/views/tentang.blade.php
+// ================================================
+// ROUTE YANG MEMERLUKAN LOGIN
+// ================================================
+// middleware('auth') = Harus login dulu untuk akses
+// Jika belum login, otomatis redirect ke /login
+// ================================================
+Route::middleware('auth')->group(function () {
+    // Semua route di dalam group ini HARUS LOGIN
+
+    Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])
+        ->name('home');
+    // ↑ ->name('home') = Memberi nama route
+    // Kegunaan: route('home') akan menghasilkan URL /home
+
+    Route::get('/profile', [ProfileController::class, 'edit'])
+        ->name('profile.edit');
+
+    Route::put('/profile', [ProfileController::class, 'update'])
+        ->name('profile.update');
 });
 
-Route::get('/sapa/{nama}', function ($nama) {
-    // ================================================
-    // Route dinamis dengan parameter {nama}
-    // ================================================
+// ========================================
+// FILE: routes/web.php (tambahan untuk admin)
+// ========================================
 
-    return "Halo, $nama! Selamat datang ";
-    // ↑ Tampilkan sapaan dengan nama yang diberikan
+// ================================================
+// ROUTE KHUSUS ADMIN
+// ================================================
+// middleware(['auth', 'admin']) = Harus login DAN harus admin
+// prefix('admin')               = Semua URL diawali /admin
+// name('admin.')                = Semua nama route diawali admin.
+// ================================================
+
+Route::middleware(AdminMiddleware::class)
+    ->prefix('admin')
+    ->name('admin.')
+    ->group(function () {
+
+        // /admin/dashboard
+        Route::get('/dashboard', [AdminController::class, 'dashboard'])
+            ->name('dashboard');
+        // ↑ Nama lengkap route: admin.dashboard
+        // ↑ URL: /admin/dashboard
+
+        // CRUD Produk: /admin/products, /admin/products/create, dll
+        Route::resource('/products', AdminProductController::class);
+        // ↑ resource() membuat 7 route sekaligus:
+        // - GET    /admin/products          → index   (admin.products.index)
+        // - GET    /admin/products/create   → create  (admin.products.create)
+        // - POST   /admin/products          → store   (admin.products.store)
+        // - GET    /admin/products/{id}     → show    (admin.products.show)
+        // - GET    /admin/products/{id}/edit→ edit    (admin.products.edit)
+        // - PUT    /admin/products/{id}     → update  (admin.products.update)
+        // - DELETE /admin/products/{id}     → destroy (admin.products.destroy)
 });
 
-Route::get('/kategori/{nama?}', function ($nama = 'Semua') {
-        return "Kategori: $nama";
-});
+Route::controller(GoogleController::class)->group(function () {
+    // ================================================
+    // ROUTE 1: REDIRECT KE GOOGLE
+    // ================================================
+    // URL: /auth/google
+    // Dipanggil saat user klik tombol "Login dengan Google"
+    // ================================================
+    Route::get('/auth/google', 'redirect')
+        ->name('auth.google');
 
-Route::get('/produk/{id}', function ($id) {
-    return "Detail Produk $id";
-})->name('produk.detail');  
+    // ================================================
+    // ROUTE 2: CALLBACK DARI GOOGLE
+    // ================================================
+    // URL: /auth/google/callback
+    // Dipanggil oleh Google setelah user klik "Allow"
+    // URL ini HARUS sama dengan yang didaftarkan di Google Console!
+    // ================================================
+    Route::get('/auth/google/callback', 'callback')
+        ->name('auth.google.callback');
+});
