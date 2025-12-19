@@ -1,4 +1,9 @@
-<!DOCTYPE html>
+{{-- ================================================
+     FILE: resources/views/layouts/admin.blade.php
+     FUNGSI: Master layout untuk halaman admin
+     ================================================ --}}
+
+     <!DOCTYPE html>
 <html lang="id">
 <head>
     <meta charset="UTF-8">
@@ -78,7 +83,7 @@
                                  Jangan query database langsung di Blade view di production app! --}}
                             @php
                                 $pendingCount = \App\Models\Order::where('status', 'pending')
-                                    ->where('payment_status', 'paid')->count();
+                                    ->where('status', 'paid')->count();
                             @endphp
                             @if($pendingCount > 0)
                                 <span class="badge bg-warning text-dark ms-auto">{{ $pendingCount }}</span>
@@ -139,7 +144,7 @@
 
             {{-- Flash Messages --}}
             <div class="px-4 pt-3">
-                @include('partials.flash-messages')
+                @include('profile.partials.flash-messages')
             </div>
 
             {{-- Page Content --}}

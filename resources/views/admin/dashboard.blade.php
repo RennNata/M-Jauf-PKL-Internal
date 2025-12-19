@@ -1,3 +1,8 @@
+{{-- ================================================
+     FILE: resources/views/admin/dashboard.blade.php
+     FUNGSI: Dashboard admin dengan statistik
+     ================================================ --}}
+
 @extends('layouts.admin')
 
 @section('title', 'Dashboard')
