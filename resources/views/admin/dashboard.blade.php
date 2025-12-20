@@ -17,7 +17,7 @@
             <div class="card border-0 shadow-sm h-100">
                 <div class="card-body">
                     <div class="d-flex justify-content-between">
-                        <div>
+                         <div>
                             <p class="text-muted mb-1">Total Pendapatan</p>
                             <h4 class="mb-0">Rp {{ number_format($stats['total_revenue'], 0, ',', '.') }}</h4>
                         </div>

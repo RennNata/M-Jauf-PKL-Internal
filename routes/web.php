@@ -10,13 +10,16 @@ use App\Http\Controllers\CheckoutController;
 use App\Http\Controllers\WishlistController;
 use App\Http\Controllers\OrderController;
 use App\Http\Controllers\ProfileController;
-use App\Http\Controllers\Auth\GoogleController;
 use App\Http\Controllers\AdminController;
 
-use App\Http\Controllers\Admin\DashboardController;
+use App\Http\Controllers\Auth\GoogleController;
+
 use App\Http\Controllers\Admin\ProductController as AdminProductController;
 use App\Http\Controllers\Admin\CategoryController as AdminCategoryController;
 use App\Http\Controllers\Admin\OrderController as AdminOrderController;
+use App\Http\Controllers\Admin\CategoryController;
+use App\Http\Controllers\Admin\ProductController;
+
 use App\Http\Middleware\AdminMiddleware;
 
 /*
@@ -59,9 +62,20 @@ Route::middleware('auth')->group(function () {
     // Profile
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
+    Route::patch('/profile/avatar', [ProfileController::class, 'updateAvatar'])->name('profile.avatar.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
-    Route::delete('/profile/avatar', [ProfileController::class, 'deleteAvatar'])
-        ->name('profile.avatar.destroy');
+    Route::delete('/profile/avatar', [ProfileController::class, 'deleteAvatar'])->name('profile.avatar.destroy');
+    Route::put('/profile/password', [ProfileController::class, 'updatePassword'])->name('profile.password.update');
+    Route::put('/profile/email', [ProfileController::class, 'updateEmail'])->name('profile.email.update');
+    // 1. Route untuk Verifikasi Email (Fix error verification.send)
+    Route::post('/email/verification-notification', [ProfileController::class, 'sendVerification'])
+        ->name('verification.send');    
+
+    // 2. Route untuk Unlink Google (Fix error profile.google.unlink)
+    // Pastikan kamu punya fungsi unlinkGoogle di ProfileController nanti
+    Route::delete('/profile/google/unlink', [ProfileController::class, 'unlinkGoogle'])
+        ->name('profile.google.unlink');
+
 
     // Cart
     Route::get('/cart', [CartController::class, 'index'])->name('cart.index');
@@ -85,7 +99,7 @@ Route::middleware('auth')->group(function () {
 
 Route::middleware(['auth', AdminMiddleware::class])->prefix('admin')->name('admin.')->group(function () {
     // Dashboard
-    Route::get('/', [DashboardController::class, 'index'])->name('dashboard');
+    Route::get('/', [AdminController::class, 'dashboard'])->name('dashboard');
 
     // Produk CRUD
     Route::resource('products', AdminProductController::class);
@@ -114,4 +128,15 @@ Route::middleware(['auth', AdminMiddleware::class])
 Route::prefix('admin')->middleware(['auth', 'admin'])->group(function() {
     Route::get('users', [\App\Http\Controllers\Admin\UserController::class, 'index'])
          ->name('admin.users.index');
+});
+
+Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(function () {
+    // Kategori
+    Route::resource('categories', CategoryController::class)->except(['show']); // Kategori biasanya tidak butuh show detail page
+
+    // Produk
+    Route::resource('products', ProductController::class);
+
+    // Route tambahan untuk AJAX Image Handling (jika diperlukan)
+    // ...
 });

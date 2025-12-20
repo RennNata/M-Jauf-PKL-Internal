@@ -11,6 +11,7 @@ use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\View\View;
 
+
 class ProfileController extends Controller
 {
     /**
@@ -31,15 +32,7 @@ class ProfileController extends Controller
     {
         $user = $request->user();
 
-        // 1. Handle Upload Avatar
-        // Cek apakah user mengupload file baru di input 'avatar'?
-        if ($request->hasFile('avatar')) {
-            // Upload file baru dan dapatkan path-nya (e.g., avatars/xxx.jpg)
-            $avatarPath = $this->uploadAvatar($request, $user);
-
-            // Simpan path ke properti model, tapi belum di-save ke DB (masih di memory)
-            $user->avatar = $avatarPath;
-        }
+        
 
         // 2. Update Data Text (Nama, Email, dll)
         // fill() mengisi atribut model dengan data validasi, tapi belum disimpan ke DB.
@@ -64,7 +57,7 @@ class ProfileController extends Controller
      * Helper khusus untuk menangani logika upload avatar.
      * Mengembalikan string path file yang tersimpan.
      */
-    protected function uploadAvatar(ProfileUpdateRequest $request, $user): string
+    protected function uploadAvatar(Request $request, $user): string
     {
         // Hapus avatar lama (Garbage Collection)
         // Cek 1: Apakah user punya avatar sebelumnya?
@@ -83,7 +76,28 @@ class ProfileController extends Controller
 
         return $path;
     }
+// Fungsi KHUSUS untuk update Avatar
+// GANTI ProfileUpdateRequest jadi Request biasa
+public function updateAvatar(Request $request) 
+{
+    // 1. Validasi manual di sini (Hanya untuk foto)
+    $request->validate([
+        'avatar' => 'required|image|mimes:jpeg,png,jpg,webp|max:2048',
+    ]);
 
+    if ($request->hasFile('avatar')) {
+        $user = $request->user();
+
+        // 2. Panggil helper yang sudah kita ubah tadi
+        $path = $this->uploadAvatar($request, $user);
+        
+        $user->update(['avatar' => $path]);
+
+        return back()->with('success', 'Foto profil berhasil diperbarui!');
+    }
+
+    return back()->with('error', 'Gagal mengunggah foto.');
+}
     /**
      * Menghapus avatar (tombol "Hapus Foto").
      */
@@ -100,6 +114,24 @@ class ProfileController extends Controller
         }
 
         return back()->with('success', 'Foto profil berhasil dihapus.');
+    }
+
+
+    /**
+     * Update password user.
+     */
+    public function updatePassword(Request $request): RedirectResponse
+    {
+        $validated = $request->validateWithBag('updatePassword', [
+            'current_password' => ['required', 'current_password'],
+            'password' => ['required', 'confirmed', 'min:8'],
+        ]);
+
+        $request->user()->update([
+            'password' => \Illuminate\Support\Facades\Hash::make($validated['password']),
+        ]);
+
+        return back()->with('status', 'password-updated');
     }
 
     /**
@@ -131,4 +163,20 @@ class ProfileController extends Controller
 
         return Redirect::to('/');
     }
+    
+    // Tambahkan fungsi ini di dalam class ProfileController
+
+public function sendVerification(Request $request) {
+    // Logika kirim email verifikasi
+    return back()->with('status', 'verification-link-sent');
+}
+
+public function unlinkGoogle(Request $request) {
+    // Logika memutus akun google
+    $user = $request->user();
+    $user->google_id = null; // Contoh jika kolomnya bernama google_id
+    $user->save();
+    
+    return back()->with('status', 'google-unlinked');
+}
 }

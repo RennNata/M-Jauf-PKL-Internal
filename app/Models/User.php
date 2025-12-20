@@ -109,7 +109,19 @@ class User extends Authenticatable
                     ->exists();
     }
 
-    public function getAvatarUrlAttribute(): string
+// app/Models/User.php
+
+// Tambahkan accessor untuk avatar URL
+
+/**
+ * Get the avatar URL.
+ * Accessor ini otomatis dipanggil saat kita akses $user->avatar_url
+ * Logika Prioritas:
+ * 1. Cek Storage Lokal: Apakah user upload file custom? Jika ya, return URL local storage.
+ * 2. Cek URL Eksternal: Apakah user login via Google? Jika ya, return URL dari Google.
+ * 3. Fallback: Gunakan Gravatar berdasarkan hash email agar user tidak tampil polos.
+ */
+public function getAvatarUrlAttribute(): string
 {
     // Prioritas 1: Avatar yang di-upload (file fisik ada di server)
     // Kita harus cek Storage::exists() agar tidak broken image jika file-nya terhapus manual.
