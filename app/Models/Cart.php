@@ -6,7 +6,13 @@ use Illuminate\Database\Eloquent\Model;
 
 class Cart extends Model
 {
-    public function cartitem()
+    protected $fillable = [
+        'user_id',
+        
+    ];
+
+
+    public function items()
     {
         return $this->hasMany(CartItem::class);
     }

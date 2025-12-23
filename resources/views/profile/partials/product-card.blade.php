@@ -75,7 +75,7 @@
             <input type="hidden" name="product_id" value="{{ $product->id }}">
             <input type="hidden" name="quantity" value="1">
             <button type="submit"
-                    class="btn btn-primary btn-sm w-100"
+                    class="btn btn-primary btn-sm w-90"
                     @if($product->stock == 0) disabled @endif>
                 <i class="bi bi-cart-plus me-1"></i>
                 @if($product->stock == 0)
@@ -83,6 +83,10 @@
                 @else
                     Tambah Keranjang
                 @endif
+            </button>
+            <button onclick="toggleWishlist({{ $product->id }})"
+            class="wishlist-btn-{{ $product->id }} btn btn-light btn-sm rounded-circle p-2 transition">
+            <i class="bi {{ Auth::check() && Auth::user()->hasInWishlist($product) ? 'bi-heart-fill text-danger' : 'bi-heart text-secondary' }} fs-5"></i>
             </button>
         </form>
     </div>

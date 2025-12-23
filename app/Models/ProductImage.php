@@ -85,4 +85,4 @@ class ProductImage extends Model
         // Set ini sebagai primary
         $this->update(['is_primary' => true]);
     }
-}
+} 

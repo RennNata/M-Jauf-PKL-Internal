@@ -24,13 +24,13 @@ class StoreProductRequest extends FormRequest
     {
         return [
             // category_id harus ada di tabel categories kolom id
-            'category_id' => ['required', 'exists:categories,id'],
+            'category_id' => ['sometimes', 'required', 'exists:categories,id'],
 
-            'name' => ['required', 'string', 'max:255'],
+            'name' => ['sometimes', 'required', 'string', 'max:255'],
             'description' => ['nullable', 'string'],
 
             // Harga minimal 1000 rupiah
-            'price' => ['required', 'numeric', 'min:1000'],
+            'price' => ['sometimes', 'required', 'numeric', 'min:1000'],
 
             // Harga diskon (opsional), tapi jika diisi:
             // 1. Harus numeric
@@ -38,8 +38,8 @@ class StoreProductRequest extends FormRequest
             // 3. Harus KURANG DARI ('lt' = less than) harga asli (price)
             'discount_price' => ['nullable', 'numeric', 'min:0', 'lt:price'],
 
-            'stock' => ['required', 'integer', 'min:0'],
-            'weight' => ['required', 'integer', 'min:1'], // Berat minimal 1 gram
+            'stock' => ['sometimes', 'required', 'integer', 'min:0'],
+            'weight' => ['sometimes', 'required', 'integer', 'min:1'], // Berat minimal 1 gram
 
             'is_active' => ['boolean'],
             'is_featured' => ['boolean'],
@@ -47,7 +47,7 @@ class StoreProductRequest extends FormRequest
             // Validasi Array Gambar
             // 'images' harus berupa array
             // Maksimal 10 file sekaligus
-            'images' => ['nullable', 'array', 'max:10'],
+            'images' => ['sometimes', 'nullable', 'array', 'max:10'],
 
             // Validasi TIAP item di dalam array images
             // 'images.*' artinya "setiap file di dalam array images"

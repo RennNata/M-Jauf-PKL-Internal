@@ -67,7 +67,7 @@ class ProfileController extends Controller
         }
 
         // Generate nama file unik untuk mencegah bentrok nama.
-        // Format: avatar-{user_id}-{timestamp}.{ext}
+        // Format: avatar-{user_id}-{timestamp }.{ext}
         $filename = 'avatar-' . $user->id . '-' . time() . '.' . $request->file('avatar')->extension();
 
         // Simpan file ke folder: storage/app/public/avatars
