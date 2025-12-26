@@ -11,6 +11,8 @@ use App\Http\Controllers\WishlistController;
 use App\Http\Controllers\OrderController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\AdminController;
+use App\Http\Controllers\PaymentController;
+use App\Http\Controllers\MidtransNotificationController;
 
 use App\Http\Controllers\Auth\GoogleController;
 
@@ -21,6 +23,9 @@ use App\Http\Controllers\Admin\CategoryController;
 use App\Http\Controllers\Admin\ProductController;
 
 use App\Http\Middleware\AdminMiddleware;
+
+use App\Services\MidtransService;
+
 
 /*
 |--------------------------------------------------------------------------
@@ -137,3 +142,26 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(fun
     // Route tambahan untuk AJAX Image Handling (jika diperlukan)
     // ...
 });
+
+Route::middleware('auth')->group(function () {
+    // ... routes lainnya
+
+    // Payment Routes
+    Route::get('/orders/{order}/snap-token', [PaymentController::class, 'getSnapToken'])
+        ->name('orders.snap-token');
+    Route::get('/orders/{order}/pay', [PaymentController::class, 'show'])
+        ->name('orders.pay');
+    Route::get('/orders/{order}/success', [PaymentController::class, 'success'])
+        ->name('orders.success');
+    Route::get('/orders/{order}/pending', [PaymentController::class, 'pending'])
+        ->name('orders.pending');
+});
+
+// ============================================================
+// MIDTRANS WEBHOOK
+// Route ini HARUS public (tanpa auth middleware)
+// Karena diakses oleh SERVER Midtrans, bukan browser user
+// ============================================================
+Route::post('midtrans/notification', [MidtransNotificationController::class, 'handle'])
+    ->name('midtrans.notification');
+

@@ -18,7 +18,7 @@
         </div>
 
         <div class="mt-4">
-            {{ $products->links() }}
+            {{ $products->links('pagination::bootstrap-5') }}
         </div>
     @else
         <div class="text-center py-5 bg-light rounded-3 shadow-sm">
