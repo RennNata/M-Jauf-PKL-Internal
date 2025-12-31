@@ -11,7 +11,7 @@
                  -{{ $product->discount_percentage }}%
              </span>
         @endif
-    </div>
+    </div>   
 
     {{-- Info --}}
     <div class="card-body d-flex flex-column">

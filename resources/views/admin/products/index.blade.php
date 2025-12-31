@@ -25,6 +25,21 @@
         <div class="card shadow-sm mb-4">
             <div class="card-header bg-white py-3 d-flex justify-content-between align-items-center">
                 <h5 class="mb-0 text-primary fw-bold">Daftar Produk</h5>
+                {{-- Filter Kategori --}}
+                <div class="dropdown">
+                    <button class="btn btn-sm btn-outline-secondary dropdown-toggle" type="button" id="filterCategory" data-bs-toggle="dropdown" aria-expanded="false"><i class="bi bi-filter"></i>{{ request('category') ? $categories->firstWhere('slug', request('category'))->name : 'Semua Kategori' }}</button>
+                        <ul class="dropdown-menu dropdown-menu-end shadow-sm" aria-labelledby="filterCategory">
+                            <li><a class="dropdown-item" href="{{ route('admin.products.index') }}">Semua Kategori</a></li>
+                            <li><hr class="dropdown-divider"></li>
+                                @foreach($categories as $category)
+                                    <li>
+                                        <a class="dropdown-item {{ request('category') == $category->slug ? 'active' : '' }}" href="{{ route('admin.products.index', ['category' => $category->slug]) }}">{{ $category->name }}</a>
+                                    </li>
+                                @endforeach
+                        </ul>
+                </div>  
+                        
+
                 <button class="btn btn-sm btn-primary" data-bs-toggle="modal" data-bs-target="#createModal">
                     <i class="bi bi-plus-lg"></i> Tambah Baru
                 </button>
@@ -165,6 +180,10 @@
                         @endforeach
                     </select>
                 </div>
+                <div class="mb-3">
+                    <label class="form-label fw-bold">Deskripsi</label>
+                    <textarea name="description" class="form-control" rows="4">{{ $product->description }}</textarea>
+                </div>
                 <div class="row">
                     <div class="col-md-6 mb-3">
                         <label class="form-label fw-bold">Harga (Rp)</label>
@@ -231,6 +250,10 @@
                                 </option>
                             @endforeach
                         </select>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label fw-bold">Deskripsi</label>
+                        <textarea name="description" class="form-control" rows="4"></textarea>
                     </div>
                     <div class="row">
                         <div class="col-md-6 mb-3">

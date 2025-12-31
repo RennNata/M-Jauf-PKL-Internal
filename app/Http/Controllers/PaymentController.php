@@ -75,4 +75,13 @@ class PaymentController extends Controller
 
         return view('orders.show', compact('order'));
     }
+
+    public function handle(Request $request)
+{
+    // Coba log dulu untuk ngetes apakah data masuk
+    \Log::info('Data Midtrans Masuk!', $request->all());
+    
+    // Logika update status kamu di sini...
+    return response()->json(['status' => 'success']);
+}
 }

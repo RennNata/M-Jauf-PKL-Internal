@@ -17,7 +17,7 @@ class Order extends Model
         'payment_status',
         'shipping_name',
         'shipping_address',
-        'shipping_phone',
+        'shipping_phone',   
         'total_amount',
         'shipping_cost',
         'snap_token',
@@ -31,5 +31,10 @@ class Order extends Model
     public function payment()
     {
         return $this->hasOne(Payment::class);
+    }
+
+    public function user()
+    {
+        return $this->belongsTo(User::class);
     }
 }
