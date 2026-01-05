@@ -222,7 +222,7 @@ class Product extends Model
               ->orWhere('description', 'like', "%{$keyword}%");
         });
     }
-
+ 
     // ... Scopes lainnya sama seperti sebelumnya ...
     public function scopeActive($query) { return $query->where('is_active', true); }
     public function scopeFeatured($query) { return $query->where('is_featured', true); }
