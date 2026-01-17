@@ -130,7 +130,7 @@
                     </table>
                 </div>
                 <div class="card-footer bg-white">
-                    {{ $orders->appends(request()->all())->links() }}
+                    {{ $orders->appends(request()->all())->links('pagination::bootstrap-5') }}
                 </div>
             </div>
         </div>

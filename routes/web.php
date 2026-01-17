@@ -23,6 +23,7 @@ use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\CategoryController;
 use App\Http\Controllers\Admin\ProductController;
 use App\Http\Controllers\Admin\ReportController;
+use App\Http\Controllers\Admin\UserController;
 
 use App\Http\Middleware\AdminMiddleware;
 
@@ -105,15 +106,12 @@ Route::middleware(['auth', AdminMiddleware::class])->prefix('admin')->name('admi
     // Dashboard
     Route::get('/', [DashboardController::class, 'index'])->name('dashboard');
 
-    // Produk CRUD
-    Route::resource('products', AdminProductController::class);
-
-    // Kategori CRUD
-    Route::resource('categories', AdminCategoryController::class);
-
     Route::get('/orders', [AdminOrderController::class, 'index'])->name('orders.index');
     Route::get('/orders/{order}', [AdminOrderController::class, 'show'])->name('orders.show');
-    Route::patch('/orders/{order}/status', [AdminOrderController::class, 'updateStatus'])->name('orders.updateStatus');
+    Route::patch('orders/{order}/update-status', [App\Http\Controllers\Admin\OrderController::class, 'updateStatus'])->name('orders.update-status');
+
+    Route::get('/users', [UserController::class, 'index'])->name('users.index');
+    Route::delete('/users/{user}', [UserController::class, 'destroy'])->name('users.destroy');
 
 });
 
@@ -145,6 +143,9 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(fun
 
     // Produk
     Route::resource('products', ProductController::class);
+
+    // Pengguna
+
 
     // Route tambahan untuk AJAX Image Handling (jika diperlukan)
     // ...

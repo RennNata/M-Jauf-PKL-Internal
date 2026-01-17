@@ -23,10 +23,10 @@
         </h6>
         <div class="mt-auto">
             @if($product->has_discount)
-                <p class="fw-bold text-danger mb-0">{{ $product->formatted_price }}</p>
+                <p class="fw-bold text-success mb-0">{{ $product->formatted_price }}</p>
                 <small class="text-decoration-line-through text-muted">{{ $product->formatted_original_price }}</small>
             @else
-                <p class="fw-bold text-primary mb-0">{{ $product->formatted_price }}</p>
+                <p class="fw-bold text-success mb-0">{{ $product->formatted_price }}</p>
             @endif
         </div>
     </div>

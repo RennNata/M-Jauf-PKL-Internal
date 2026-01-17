@@ -15,7 +15,7 @@ return new class extends Migration
     $table->string('order_number')->unique(); // ID unik, misal ORD-20231201-001
 
     // Status Pesanan
-    $table->enum('status', ['pending', 'processing', 'completed', 'cancelled'])->default('pending');
+   $table->enum('status', ['pending', 'processing', 'completed', 'cancelled', 'shipped'])->default('pending');
 
     // Status Pembayaran (PENTING: tambahkan ini)
     $table->enum('payment_status', ['unpaid', 'paid', 'failed'])->default('unpaid');

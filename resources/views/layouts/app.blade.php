@@ -33,10 +33,12 @@
     @stack('scripts')
 </head>
 <body>
+  @unless(request()->routeIs('login', 'register', 'password.*', 'verification.*'))
     {{-- ============================================
          NAVBAR
          ============================================ --}}
     @include('profile.partials.navbar')
+  @endunless
 
     {{-- ============================================
          FLASH MESSAGES
@@ -51,11 +53,12 @@
     <main class="min-vh-100">
         @yield('content')
     </main>
-
+@unless(request()->routeIs('login', 'register', 'password.*', 'verification.*'))
     {{-- ============================================
          FOOTER
          ============================================ --}}
     @include('profile.partials.footer')
+@endunless
 
     {{-- Stack untuk JS tambahan per halaman --}}
     @stack('scripts')
@@ -127,6 +130,39 @@
       badge.style.display = count > 0 ? "inline-block" : "none";
     }
   }
-</script>
+
+  // Fungsi untuk ganti tema
+    function toggleDarkMode() {
+        const htmlElement = document.documentElement;
+        const currentTheme = htmlElement.getAttribute('data-bs-theme');
+        const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+        
+        // Ganti atribut di HTML
+        htmlElement.setAttribute('data-bs-theme', newTheme);
+        
+        // Simpan pilihan di browser
+        localStorage.setItem('theme', newTheme);
+        
+        // Ganti icon
+        updateIcon(newTheme);
+    }
+
+    // Fungsi update icon
+    function updateIcon(theme) {
+        const icon = document.getElementById('theme-icon');
+        if (theme === 'dark') {
+            icon.classList.replace('bi-moon-stars-fill', 'bi-sun-fill');
+        } else {
+            icon.classList.replace('bi-sun-fill', 'bi-moon-stars-fill');
+        }
+    }
+
+    // Jalankan saat halaman pertama kali dibuka
+    (function () {
+        const savedTheme = localStorage.getItem('theme') || 'light';
+        document.documentElement.setAttribute('data-bs-theme', savedTheme);
+        updateIcon(savedTheme);
+    })();
+</script> 
 </body>
 </html>

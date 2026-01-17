@@ -9,6 +9,7 @@ namespace App\Http\Controllers;
 use App\Models\Category;
 use App\Models\Product;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class HomeController extends Controller
 {
@@ -44,14 +45,12 @@ class HomeController extends Controller
         // - Flag is_featured = true
         // - Aktif dan ada stok
         // ================================================
-        $featuredProducts = Product::query()
-            ->with(['category', 'primaryImage'])  // Eager load untuk performa
-            ->active()                             // Scope: is_active = true
-            ->inStock()                            // Scope: stock > 0
-            ->featured()                           // Scope: is_featured = true
-            ->latest()
-            ->take(8)
-            ->get();
+        $featuredProducts = Product::withCount(['orderItems as total_sales' => function($query) {
+        $query->select(DB::raw('sum(quantity)'));
+        }])
+        ->orderByDesc('total_sales')
+        ->take(4) // Ambil 4 produk teratas
+        ->get();
 
         // ================================================
         // PRODUK TERBARU

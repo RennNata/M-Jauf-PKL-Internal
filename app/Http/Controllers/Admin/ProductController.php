@@ -71,8 +71,10 @@ class ProductController extends Controller
 
             // 2. Upload gambar (jika ada)
             // Kita pisahkan logika upload ke helper method agar kode store() tetap bersih.
-            if ($request->hasFile('images')) {
-                $this->uploadImages($request->file('images'), $product);
+            if($request->hasFile('images')){ // Ubah 'image' jadi 'images' jika inputmu multiple
+            $this->uploadImages($request->file('images'), $product);
+            } elseif ($request->hasFile('image')) { // Jika input cuma satu file
+            $this->uploadImages([$request->file('image')], $product);
             }
 
             // === DB TRANSACTION COMMIT ===
@@ -131,8 +133,10 @@ class ProductController extends Controller
             $product->update($request->validated());
 
             // 2. Upload gambar BARU (jika user menambah gambar)
-            if ($request->hasFile('images')) {
-                $this->uploadImages($request->file('images'), $product);
+            if($request->hasFile('images')){
+            $this->uploadImages($request->file('images'), $product);
+            } elseif ($request->hasFile('image')) {
+            $this->uploadImages([$request->file('image')], $product);
             }
 
             // 3. Hapus gambar LAMA (yang dicentang user untuk dihapus)

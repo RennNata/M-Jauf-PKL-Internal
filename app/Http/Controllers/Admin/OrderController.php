@@ -33,7 +33,7 @@ class OrderController extends Controller
     public function show(Order $order)
     {
         // Load item produk dan data user
-        $order->load(['items.product', 'user']);
+        $order->load(['user', 'items.product.primaryImage']);
         return view('admin.orders.show', compact('order'));
     }
 
@@ -42,35 +42,31 @@ class OrderController extends Controller
      * Handle otomatis pengembalian stok jika status diubah jadi Cancelled.
      */
     public function updateStatus(Request $request, Order $order)
-    {
-        // Validasi status yang dikirim form
-        $request->validate([
-            'status' => 'required|in:processing,completed,cancelled'
-        ]);
+{
+    // 1. Tambahkan 'shipped' dan 'delivered' di validasi
+    // 2. Kita pakai 'delivered' sebagai pengganti 'completed' agar sinkron dengan UI
+    $request->validate([
+        'status' => 'required|in:processing,shipped,completed,cancelled'
+    ]);
 
-        $oldStatus = $order->status;
-        $newStatus = $request->status;
+    $oldStatus = $order->status;
+    $newStatus = $request->status;
 
-        // ============================================================
-        // LOGIKA RESTOCK (PENTING!)
-        // ============================================================
-        // Jika admin membatalkan pesanan, stok barang harus dikembalikan ke gudang.
-        // Syarat:
-        // 1. Status baru adalah 'cancelled'
-        // 2. Status lama BUKAN 'cancelled' (agar tidak restock 2x kalau tombol ditekan berkali-kali)
-        // ============================================================
-        if ($newStatus === 'cancelled' && $oldStatus !== 'cancelled') {
-            foreach ($order->items as $item) {
-                // increment() adalah operasi atomik (thread-safe) di level database.
-                // SQL-nya kurang lebih: UPDATE products SET stock = stock + X WHERE id = Y
-                // Ini aman dari Race Condition jika ada transaksi bersamaan.
-                $item->product->increment('stock', $item->quantity);
-            }
+    // LOGIKA RESTOCK (Tetap dipertahankan karena ini keren buat nilai plus)
+    if ($newStatus === 'cancelled' && $oldStatus !== 'cancelled') {
+        foreach ($order->items as $item) {
+            $item->product->increment('stock', $item->quantity);
         }
-
-        // Update status di database
-        $order->update(['status' => $newStatus]);
-
-        return back()->with('success', "Status pesanan diperbarui menjadi $newStatus");
     }
+
+    // Update status di database
+    $order->update(['status' => $newStatus]);
+
+    // Logika Otomatis: Jika sudah Delivered, set Payment jadi Paid (Opsional tapi logis)
+    if ($newStatus === 'delivered') {
+        $order->update(['payment_status' => 'paid']);
+    }
+
+    return back()->with('success', "Status pesanan berhasil diupdate menjadi: " . strtoupper($newStatus));
+}
 }

@@ -32,6 +32,6 @@ class CartItem extends Model
     public function getSubtotalAttribute()
     {
         // Pastikan field harga produk sesuai (price)
-        return $this->quantity * $this->product->price;
+        return $this->product->display_price * $this->quantity;
     }
 }

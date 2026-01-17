@@ -224,13 +224,22 @@ class Product extends Model
     }
  
     // ... Scopes lainnya sama seperti sebelumnya ...
-    public function scopeActive($query) { return $query->where('is_active', true); }
+    public function scopeActive($query) {
+        return $query->where('is_active', true)
+                 ->whereHas('category', function($q) {
+                     $q->where('is_active', true);
+                 });
+    }
     public function scopeFeatured($query) { return $query->where('is_featured', true); }
     public function scopeInStock($query) { return $query->where('stock', '>', 0); }
 
     public function scopeAvailable($query)
     {
-        return $query->active()->inStock();
+        return $query->where('is_active', true)
+                 ->where('stock', '>', 0)
+                 ->whereHas('category', function($q) {
+                     $q->where('is_active', true);
+                 });
     }
 
     public function scopeByCategory($query, string $categorySlug)

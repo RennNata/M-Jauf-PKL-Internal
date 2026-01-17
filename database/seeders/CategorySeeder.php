@@ -12,39 +12,24 @@ class CategorySeeder extends Seeder
     {
         $categories = [
             [
-                'name' => 'Elektronik',
-                'slug' => 'elektronik',
-                'description' => 'Perangkat elektronik seperti smartphone, laptop, dan gadget lainnya',
+                'name' => 'Tanaman Hias Daun',
+                'slug' => 'tanaman_hias_daun',
+                'description' => 'Berbagai tanaman hias daun yang indah dan mudah dirawat',
+                'image' => 'categories/tanaman_hias_daun.jpg',
                 'is_active' => true,
             ],
             [
-                'name' => 'Fashion Pria',
-                'slug' => 'fashion-pria',
-                'description' => 'Pakaian, sepatu, dan aksesoris untuk pria',
+                'name' => 'Tanaman Hias Bunga',
+                'slug' => 'tanaman_hias_bunga',
+                'description' => 'Berbagai tanaman hias bunga yang indah dan mudah dirawat',
+                'image' => 'categories/tanaman_hias_bunga.jpg',
                 'is_active' => true,
             ],
             [
-                'name' => 'Fashion Wanita',
-                'slug' => 'fashion-wanita',
-                'description' => 'Pakaian, sepatu, dan aksesoris untuk wanita',
-                'is_active' => true,
-            ],
-            [
-                'name' => 'Makanan & Minuman',
-                'slug' => 'makanan-minuman',
-                'description' => 'Berbagai makanan ringan, minuman, dan bahan makanan',
-                'is_active' => true,
-            ],
-            [
-                'name' => 'Kesehatan & Kecantikan',
-                'slug' => 'kesehatan-kecantikan',
-                'description' => 'Produk kesehatan, skincare, dan kosmetik',
-                'is_active' => true,
-            ],
-            [
-                'name' => 'Rumah Tangga',
-                'slug' => 'rumah-tangga',
-                'description' => 'Peralatan rumah tangga dan dekorasi',
+                'name' => 'Tanaman Hias Batang',
+                'slug' => 'tanaman_hias_batang',
+                'description' => 'Berbagai tanaman hias batang yang indah dan mudah dirawat',
+                'image' => 'categories/tanaman_hias_batang.jpg',
                 'is_active' => true,
             ],
         ];

@@ -34,7 +34,7 @@ class DashboardController extends Controller
             'total_customers' => User::where('role', 'customer')->count() ?? 0,
             // Stok Rendah: Produk dengan stok <= 5
             // Berguna untuk notifikasi re-stock
-            'low_stock' => Product::where('stock', '<=', 5)->count() ?? 0,
+            'low_stock' => Product::where('stock', '<=', 10)->count() ?? 0,
         ];
 
         // 2. Data Tabel Pesanan Terbaru (5 transaksi terakhir)

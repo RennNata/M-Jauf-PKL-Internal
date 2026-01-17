@@ -5,6 +5,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Support\Facades\Storage;
 
 class ProductImage extends Model
@@ -30,15 +31,25 @@ class ProductImage extends Model
     // ==================== ACCESSORS ====================
 
     /**
-     * URL gambar lengkap.
+     * URL gambar lengkap. 
      */
-    public function getImageUrlAttribute(): string
+    public function imageUrl(): Attribute
+    {
+        return Attribute::get(function () {
+            if (str_starts_with($this->image_path, 'http')) {
+            return $this->image_path;
+            }
+            return Storage::url($this->image_path);
+        });
+    }
+
+    // app/Models/ProductImage.php
+    public function getImageUrlAttribute()
     {
         if (str_starts_with($this->image_path, 'http')) {
             return $this->image_path;
         }
-
-        return asset('storage/' . $this->image_path);
+    return asset('storage/' . $this->image_path);
     }
 
     /**

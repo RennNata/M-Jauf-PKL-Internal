@@ -1,5 +1,14 @@
-    line 125
-    Route::prefix('admin')->middleware(['auth', 'admin'])->group(function() {
-    Route::get('users', [\App\Http\Controllers\Admin\UserController::class, 'index'])
-         ->name('admin.users.index');
-    });
+<label for="name" class="form-label fw-bold text-muted small">NAMA LENGKAP</label>
+<input id="name" type="text" class="form-control form-control-lg bg-light border-0 @error('name') is-invalid @enderror" name="name" value="{{ old('name') }}" required placeholder="Contoh: Budi Santoso">
+@error('name') <span class="invalid-feedback"><strong>{{ $message }}</strong></span> @enderror
+
+<label for="email" class="form-label fw-bold text-muted small">ALAMAT EMAIL</label>
+<input id="email" type="email" class="form-control form-control-lg bg-light border-0 @error('email') is-invalid @enderror" name="email" value="{{ old('email') }}" required placeholder="email@anda.com">
+@error('email') <span class="invalid-feedback"><strong>{{ $message }}</strong></span> @enderror
+
+<label for="password" class="form-label fw-bold text-muted small">KATA SANDI</label>
+<input id="password" type="password" class="form-control form-control-lg bg-light border-0 @error('password') is-invalid @enderror" name="password" required placeholder="••••••••">
+@error('password') <span class="invalid-feedback"><strong>{{ $message }}</strong></span> @enderror
+
+<label for="password-confirm" class="form-label fw-bold text-muted small">KONFIRMASI SANDI</label>
+<input id="password-confirm" type="password" class="form-control form-control-lg bg-light border-0" name="password_confirmation" required placeholder="••••••••">
